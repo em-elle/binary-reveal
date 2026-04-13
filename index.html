@@ -338,52 +338,11 @@
     color: #888;
   }
 
-  .subtitle-line { display: inline; }
-
-  @media (max-width: 768px) {
-    .subtitle-line { display: block; }
-
-    #mobile-notice { display: none; }
+  @media (hover: none) and (pointer: coarse) {
+    #mobile-notice { display: flex; }
+    #canvas-container { display: none; }
+    #progress-bar { display: none; }
     #custom-cursor { display: none; }
-    #touch-ring { display: block; }
-
-    #canvas-container {
-      width: calc(100vw - 32px);
-      height: calc(100vh - 32px);
-      top: 16px;
-      left: 16px;
-    }
-
-    #close-btn {
-      top: calc(16px + 48px);
-      right: calc(16px + 48px);
-    }
-
-    #reveal-progress {
-      top: 16px;
-    }
-
-    .content-layer {
-      padding: 0 20px;
-    }
-  }
-
-  #touch-ring {
-    display: none;
-    position: fixed;
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    border: 1.5px solid rgba(255,255,255,0.25);
-    pointer-events: none;
-    transform: translate(-50%, -50%);
-    z-index: 9999;
-    transition: opacity 0.3s ease;
-    opacity: 0;
-  }
-
-  #touch-ring.active {
-    opacity: 1;
   }
 
   @keyframes zeroPulse {
@@ -550,7 +509,7 @@
     <div id="intro-top">
       <div id="intro-title">
         <div class="t-pixel-main t-binary-block">00000000000000000000<br>00000000000000000000<br>00000000000000000000<br>00000000000000000000<br>00000000000000000000<br>00000000000000000000<br>00000000000000000000<br>00000000000000000001</div>
-        <div class="t-pixel-main t-subtitle"><span class="subtitle-line">JOB HUNTING </span><span class="subtitle-line">IS NOT BINARY</span></div>
+        <div class="t-pixel-main t-subtitle">JOB HUNTING IS NOT BINARY</div>
       </div>
       <p id="intro-desc">An interactive essay for those interviewing</p>
     </div>
@@ -561,7 +520,6 @@
 </div>
 
 <div id="custom-cursor">0</div>
-<div id="touch-ring"></div>
 <div id="progress-bar"></div>
 
 <div id="reveal-progress"></div>
@@ -741,42 +699,10 @@ requestAnimationFrame(() => {
   });
 });
 
-const isMobile = window.matchMedia('(max-width: 768px)').matches;
-const touchRing = document.getElementById('touch-ring');
-
 document.addEventListener('mousemove', (e) => {
   mouseX = e.clientX;
   mouseY = e.clientY;
 });
-
-if (isMobile) {
-  let touchTimeout;
-  document.addEventListener('touchmove', (e) => {
-    const t = e.touches[0];
-    mouseX = t.clientX;
-    mouseY = t.clientY;
-    touchRing.style.left = t.clientX + 'px';
-    touchRing.style.top = t.clientY + 'px';
-    touchRing.classList.add('active');
-    clearTimeout(touchTimeout);
-    touchTimeout = setTimeout(() => touchRing.classList.remove('active'), 300);
-  }, { passive: true });
-
-  document.addEventListener('touchstart', (e) => {
-    const t = e.touches[0];
-    mouseX = t.clientX;
-    mouseY = t.clientY;
-    touchRing.style.left = t.clientX + 'px';
-    touchRing.style.top = t.clientY + 'px';
-    touchRing.classList.add('active');
-  }, { passive: true });
-
-  document.addEventListener('touchend', () => {
-    touchRing.classList.remove('active');
-    mouseX = -9999;
-    mouseY = -9999;
-  }, { passive: true });
-}
 
 function scrambleReveal(item) {
   const zeroEl = item.zeroEl;
@@ -828,11 +754,10 @@ document.getElementById('start-btn').addEventListener('click', () => {
   const btn = document.getElementById('start-btn');
   const rect = btn.getBoundingClientRect();
 
-  const margin = isMobile ? 16 : window.innerWidth * 0.1;
-  const modalW = window.innerWidth - margin * 2;
-  const modalH = window.innerHeight - margin * 2;
-  const modalL = margin;
-  const modalT = margin;
+  const modalW = window.innerWidth * 0.8;
+  const modalH = window.innerHeight * 0.8;
+  const modalL = (window.innerWidth - modalW) / 2;
+  const modalT = (window.innerHeight - modalH) / 2;
 
   const overlay = document.createElement('div');
   overlay.style.cssText = `
@@ -1079,8 +1004,7 @@ function animate() {
       oneCtx.restore();
     }
 
-    // === MAGNET PHASE — repel all words from cursor (desktop only) ===
-    if (isMobile) return;
+    // === MAGNET PHASE — repel all words from cursor ===
     for (let i = 0; i < wordWraps.length; i++) {
       const wrap = wordWraps[i];
       const rect = wrap.getBoundingClientRect();
