@@ -557,9 +557,9 @@ if (isMobile) {
   document.body.style.overflow = 'hidden';
   document.addEventListener('touchmove', e => e.preventDefault(), { passive: false });
 
-  // Exact spacing as specified
-  document.getElementById('intro').style.cssText += ';display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:0;height:100vh;overflow:hidden;';
-  document.getElementById('intro-main').style.cssText += ';margin-top:48px;display:flex;flex-direction:column;align-items:center;';
+  document.getElementById('intro').style.padding = '0';
+  document.getElementById('intro').style.justifyContent = 'flex-start';
+  document.getElementById('intro-main').style.marginTop = '48px';
 
   document.querySelector('#intro-title .t-binary-block').style.marginBottom = '0';
   document.querySelector('#intro-title .t-subtitle').innerHTML = 'JOB HUNTING<br>IS NOT BINARY';
