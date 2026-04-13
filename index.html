@@ -786,13 +786,10 @@ const creditLink = document.getElementById('credit-link');
 creditLink.addEventListener('mouseenter', () => setCursorOpacity(0.6));
 creditLink.addEventListener('mouseleave', () => setCursorOpacity(0.25));
 
-/let startBtnRect = null;
-
-/// Intro: expand button to modal, then reveal article
+// Intro: expand button to modal, then reveal article
 document.getElementById('start-btn').addEventListener('click', () => {
   const btn = document.getElementById('start-btn');
   const rect = btn.getBoundingClientRect();
-  startBtnRect = rect;
 
   const modalW = window.innerWidth * 0.8;
   const modalH = window.innerHeight * 0.8;
@@ -851,40 +848,10 @@ document.getElementById('start-btn').addEventListener('click', () => {
 // Close modal
 closeBtn.addEventListener('click', () => {
   const canvas = document.getElementById('canvas-container');
-  const targetRect = startBtnRect || closeBtn.getBoundingClientRect();
-
-  // Create overlay starting at modal size, animate back to button position
-  const overlay = document.createElement('div');
-  overlay.style.cssText = `
-    position: fixed;
-    left: ${canvas.offsetLeft}px;
-    top: ${canvas.offsetTop}px;
-    width: ${canvas.offsetWidth}px;
-    height: ${canvas.offsetHeight}px;
-    background: #d8d4d0;
-    border-radius: 16px;
-    z-index: 9;
-    pointer-events: none;
-    transition: left 0.85s cubic-bezier(0.65, 0, 0.35, 1),
-                top 0.85s cubic-bezier(0.65, 0, 0.35, 1),
-                width 0.85s cubic-bezier(0.65, 0, 0.35, 1),
-                height 0.85s cubic-bezier(0.65, 0, 0.35, 1);
-  `;
-  document.body.appendChild(overlay);
-
   canvas.classList.remove('open');
   modalOpen = false;
   closeBtn.style.display = 'none';
   revealProgress.classList.remove('visible');
-
-  requestAnimationFrame(() => requestAnimationFrame(() => {
-    overlay.style.left   = targetRect.left + 'px';
-    overlay.style.top    = targetRect.top + 'px';
-    overlay.style.width  = targetRect.width + 'px';
-    overlay.style.height = targetRect.height + 'px';
-  }));
-
-  overlay.addEventListener('transitionend', () => overlay.remove(), { once: true });
 });
 
 // Sample pixel positions from a glyph rendered at actual cursor size (scale=1)
