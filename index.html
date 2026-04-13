@@ -848,9 +848,40 @@ document.getElementById('start-btn').addEventListener('click', () => {
 // Close modal
 closeBtn.addEventListener('click', () => {
   const canvas = document.getElementById('canvas-container');
+  const btnRect = closeBtn.getBoundingClientRect();
+
+  // Create overlay starting at modal size, animate to close button size
+  const overlay = document.createElement('div');
+  overlay.style.cssText = `
+    position: fixed;
+    left: ${canvas.offsetLeft}px;
+    top: ${canvas.offsetTop}px;
+    width: ${canvas.offsetWidth}px;
+    height: ${canvas.offsetHeight}px;
+    background: #d8d4d0;
+    border-radius: 16px;
+    z-index: 9;
+    pointer-events: none;
+    transition: left 0.85s cubic-bezier(0.65, 0, 0.35, 1),
+                top 0.85s cubic-bezier(0.65, 0, 0.35, 1),
+                width 0.85s cubic-bezier(0.65, 0, 0.35, 1),
+                height 0.85s cubic-bezier(0.65, 0, 0.35, 1);
+  `;
+  document.body.appendChild(overlay);
+
   canvas.classList.remove('open');
   modalOpen = false;
   closeBtn.style.display = 'none';
+  revealProgress.classList.remove('visible');
+
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    overlay.style.left   = btnRect.left + 'px';
+    overlay.style.top    = btnRect.top + 'px';
+    overlay.style.width  = btnRect.width + 'px';
+    overlay.style.height = btnRect.height + 'px';
+  }));
+
+  overlay.addEventListener('transitionend', () => overlay.remove(), { once: true });
 });
 
 // Sample pixel positions from a glyph rendered at actual cursor size (scale=1)
