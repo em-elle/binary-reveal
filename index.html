@@ -550,12 +550,14 @@
 const isMobile = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
 if (isMobile) {
   document.getElementById('start-btn').style.display = 'none';
-  document.getElementById('mobile-msg').style.display = 'block';
-  document.getElementById('intro-main').style.marginTop = '0';
-  document.getElementById('intro').style.justifyContent = 'flex-start';
-  document.getElementById('intro').style.padding = '8vh 0 0';
   document.getElementById('intro').style.overflow = 'hidden';
   document.querySelector('#intro-title .t-subtitle').innerHTML = 'JOB HUNTING<br>IS NOT BINARY';
+  const msg = document.getElementById('mobile-msg');
+  msg.style.display = 'block';
+  msg.style.position = 'absolute';
+  msg.style.bottom = 'calc(4vh + 2em)';
+  msg.style.width = '100%';
+  msg.style.left = '0';
 }
 
 const blocks = [
