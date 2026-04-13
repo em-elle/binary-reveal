@@ -554,8 +554,12 @@ if (isMobile) {
   document.getElementById('intro-main').style.marginTop = '0';
   document.getElementById('intro').style.justifyContent = 'flex-start';
   document.getElementById('intro').style.padding = '0';
-  document.querySelector('#intro-title .t-binary-block').style.marginBottom = '2em';
   document.querySelector('#intro-title .t-subtitle').innerHTML = 'JOB HUNTING<br>IS NOT BINARY';
+  const mobileMsg = document.getElementById('mobile-msg');
+  mobileMsg.style.position = 'absolute';
+  mobileMsg.style.bottom = 'calc(4vh + 32px)';
+  mobileMsg.style.left = '0';
+  mobileMsg.style.width = '100%';
   document.getElementById('intro').style.overflow = 'hidden';
 }
 
