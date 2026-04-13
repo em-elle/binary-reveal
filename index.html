@@ -531,9 +531,9 @@
       <p id="intro-desc">An interactive essay for those interviewing</p>
     </div>
     <button id="start-btn">Read essay</button>
-    <p id="mobile-msg">This piece is designed for a cursor.<br>Please visit on a device with a mouse or trackpad.</p>
   </div>
 
+  <p id="mobile-msg">This piece is designed for a cursor.<br>Please visit on a device with a mouse or trackpad.</p>
   <div id="intro-credit">by <a href="https://askformailinh.com" target="_blank" rel="noopener" id="credit-link">Mai-Linh Barry</a> using Claude Code</div>
 </div>
 
@@ -553,13 +553,11 @@
 const isMobile = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
 if (isMobile) {
   document.getElementById('start-btn').style.display = 'none';
-  const msg = document.getElementById('mobile-msg');
-  msg.style.display = 'block';
-  msg.style.position = 'absolute';
-  msg.style.bottom = 'calc(4vh + 11px + 24px)';
-  msg.style.left = '0';
-  msg.style.width = '100%';
-  document.getElementById('intro').style.justifyContent = 'flex-start';
+  document.getElementById('mobile-msg').style.display = 'block';
+  document.getElementById('mobile-msg').style.marginBottom = '16px';
+  document.getElementById('intro-credit').style.position = 'relative';
+  document.getElementById('intro-credit').style.bottom = 'auto';
+  document.getElementById('intro').style.justifyContent = 'space-between';
   document.getElementById('intro').style.padding = '0';
   document.getElementById('intro-main').style.marginTop = '0';
   document.querySelector('#intro-title .t-subtitle').innerHTML = 'JOB HUNTING<br>IS NOT BINARY';
