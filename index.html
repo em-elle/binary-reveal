@@ -3,9 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Binary Reveal</title>
+<title>Job Hunting Is Not Binary</title>
+<meta name="description" content="An interactive essay for those interviewing">
+<meta property="og:title" content="Job Hunting Is Not Binary">
+<meta property="og:description" content="An interactive essay for those interviewing">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&display=swap">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&display=swap');
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -32,10 +38,6 @@
     line-height: 1;
   }
 
-  #custom-cursor.is-one {
-    opacity: 0.25;
-    transition: opacity 0.8s ease;
-  }
 
 
   #canvas-container {
@@ -321,22 +323,6 @@
   }
 
   /* Mobile */
-  #mobile-notice {
-    display: none;
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: #0a0a0a;
-    color: #888;
-    z-index: 1000;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 32px;
-    font-family: 'Source Serif 4', Georgia, serif;
-    font-size: 18px;
-    line-height: 1.6;
-    color: #888;
-  }
 
   #mobile-msg {
     display: none;
@@ -352,17 +338,21 @@
   }
 
   @media (hover: none) and (pointer: coarse) {
-    #mobile-notice { display: none; }
     #canvas-container { display: none; }
     #progress-bar { display: none; }
     #custom-cursor { display: none; }
-    #start-btn { display: none; }
-    #mobile-msg { display: block; }
   }
 
   @keyframes zeroPulse {
     0%, 100% { opacity: 1; }
     50% { opacity: 1; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .text-char { transition: none; }
+    .zero-char { animation: none !important; }
+    .word-wrap { transition: none; }
+    #progress-bar { transition: none; }
   }
 
   /* Intro screen */
@@ -518,10 +508,6 @@
 </head>
 <body>
 
-<div id="mobile-notice">
-  This piece is designed for a cursor.<br>
-  Please visit on a device with a mouse or trackpad.
-</div>
 
 <div id="intro">
   <div id="intro-main">
@@ -640,6 +626,8 @@ let isOneMode = false;
 const blockMeta = [];
 let oneCvs = null, oneCtx = null, oneParticlesRel = null;
 let cursorOpacity = 0.25;
+let lastProgress = -1;
+let modalOpen = false;
 
 // Build DOM — wrap chars in word-level spans
 blocks.forEach((block, blockIdx) => {
@@ -833,29 +821,35 @@ document.getElementById('start-btn').addEventListener('click', () => {
     overlay.style.height = modalH + 'px';
   }));
 
-  overlay.addEventListener('transitionend', () => {
+  let opened = false;
+  const openModal = () => {
+    if (opened) return;
+    opened = true;
     const canvas = document.getElementById('canvas-container');
     canvas.style.transition = 'none';
     canvas.classList.add('open');
+    modalOpen = true;
     closeBtn.style.display = 'flex';
     if (!isOneMode) {
       revealProgress.textContent = 'Move cursor to reveal text–0% of the essay revealed';
       revealProgress.classList.add('visible');
     }
-    // Remove overlay only after canvas is painted
     requestAnimationFrame(() => {
       overlay.remove();
-      requestAnimationFrame(() => {
-        canvas.style.transition = '';
-      });
+      requestAnimationFrame(() => { canvas.style.transition = ''; });
     });
-  }, { once: true });
+  };
+
+  overlay.addEventListener('transitionend', openModal, { once: true });
+  // Fallback: if transitionend never fires (e.g. reduced motion, background tab)
+  setTimeout(openModal, 1000);
 });
 
 // Close modal
 closeBtn.addEventListener('click', () => {
   const canvas = document.getElementById('canvas-container');
   canvas.classList.remove('open');
+  modalOpen = false;
   closeBtn.style.display = 'none';
 });
 
@@ -1019,8 +1013,12 @@ function animate() {
     });
 
     const progress = totalChars > 0 ? (revealedCount / totalChars) * 100 : 0;
-    progressBar.style.width = progress + '%';
-    revealProgress.textContent = 'Move cursor to reveal text–' + Math.round(progress) + '% of the essay revealed';
+    const progressRounded = Math.round(progress);
+    if (progressRounded !== lastProgress) {
+      lastProgress = progressRounded;
+      progressBar.style.width = progress + '%';
+      revealProgress.textContent = 'Move cursor to reveal text–' + progressRounded + '% of the essay revealed';
+    }
 
     // Switch to "1" mode when nearly fully revealed
     if (revealedCount >= totalChars * 0.95) {
@@ -1074,7 +1072,8 @@ function animate() {
     }
   }
 
-  // Always repel intro credit words
+  // Repel intro credit words only when intro is visible
+  if (modalOpen) { requestAnimationFrame(animate); return; }
   for (let i = 0; i < introRepelWraps.length; i++) {
     const wrap = introRepelWraps[i];
     const rect = wrap.getBoundingClientRect();
@@ -1131,6 +1130,13 @@ const introRepelWraps = [
 ];
 
 requestAnimationFrame(animate);
+
+window.addEventListener('resize', () => {
+  if (oneCvs) {
+    oneCvs.width = window.innerWidth;
+    oneCvs.height = window.innerHeight;
+  }
+});
 </script>
 </body>
 </html>
