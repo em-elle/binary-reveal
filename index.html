@@ -786,10 +786,13 @@ const creditLink = document.getElementById('credit-link');
 creditLink.addEventListener('mouseenter', () => setCursorOpacity(0.6));
 creditLink.addEventListener('mouseleave', () => setCursorOpacity(0.25));
 
-// Intro: expand button to modal, then reveal article
+/let startBtnRect = null;
+
+/// Intro: expand button to modal, then reveal article
 document.getElementById('start-btn').addEventListener('click', () => {
   const btn = document.getElementById('start-btn');
   const rect = btn.getBoundingClientRect();
+  startBtnRect = rect;
 
   const modalW = window.innerWidth * 0.8;
   const modalH = window.innerHeight * 0.8;
@@ -848,9 +851,9 @@ document.getElementById('start-btn').addEventListener('click', () => {
 // Close modal
 closeBtn.addEventListener('click', () => {
   const canvas = document.getElementById('canvas-container');
-  const btnRect = closeBtn.getBoundingClientRect();
+  const targetRect = startBtnRect || closeBtn.getBoundingClientRect();
 
-  // Create overlay starting at modal size, animate to close button size
+  // Create overlay starting at modal size, animate back to button position
   const overlay = document.createElement('div');
   overlay.style.cssText = `
     position: fixed;
@@ -875,10 +878,10 @@ closeBtn.addEventListener('click', () => {
   revealProgress.classList.remove('visible');
 
   requestAnimationFrame(() => requestAnimationFrame(() => {
-    overlay.style.left   = btnRect.left + 'px';
-    overlay.style.top    = btnRect.top + 'px';
-    overlay.style.width  = btnRect.width + 'px';
-    overlay.style.height = btnRect.height + 'px';
+    overlay.style.left   = targetRect.left + 'px';
+    overlay.style.top    = targetRect.top + 'px';
+    overlay.style.width  = targetRect.width + 'px';
+    overlay.style.height = targetRect.height + 'px';
   }));
 
   overlay.addEventListener('transitionend', () => overlay.remove(), { once: true });
