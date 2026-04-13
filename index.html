@@ -338,11 +338,25 @@
     color: #888;
   }
 
+  #mobile-msg {
+    display: none;
+    font-family: 'Fira Code', monospace;
+    font-size: 11px;
+    font-weight: 300;
+    color: #888;
+    letter-spacing: 0.06em;
+    text-align: center;
+    line-height: 1.8;
+    margin-top: 32px;
+  }
+
   @media (hover: none) and (pointer: coarse) {
     #mobile-notice { display: flex; }
     #canvas-container { display: none; }
     #progress-bar { display: none; }
     #custom-cursor { display: none; }
+    #start-btn { display: none; }
+    #mobile-msg { display: block; }
   }
 
   @keyframes zeroPulse {
@@ -514,6 +528,7 @@
       <p id="intro-desc">An interactive essay for those interviewing</p>
     </div>
     <button id="start-btn">Read essay</button>
+    <p id="mobile-msg">This piece is designed for a cursor.<br>Please visit on a device with a mouse or trackpad.</p>
   </div>
 
   <div id="intro-credit">by <a href="https://askformailinh.com" target="_blank" rel="noopener" id="credit-link">Mai-Linh Barry</a> using Claude Code</div>
