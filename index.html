@@ -553,16 +553,25 @@
 const isMobile = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
 if (isMobile) {
   document.getElementById('start-btn').style.display = 'none';
-  document.getElementById('mobile-msg').style.display = 'block';
-  document.getElementById('mobile-msg').style.marginBottom = '16px';
-  document.getElementById('intro-credit').style.position = 'relative';
-  document.getElementById('intro-credit').style.bottom = 'auto';
-  document.getElementById('intro').style.justifyContent = 'space-between';
-  document.getElementById('intro').style.padding = '0';
-  document.getElementById('intro-main').style.marginTop = '0';
-  document.querySelector('#intro-title .t-subtitle').innerHTML = 'JOB HUNTING<br>IS NOT BINARY';
-  document.querySelector('#intro-title .t-binary-block').style.marginBottom = '0.5em';
   document.body.style.overflow = 'hidden';
+
+  // Exact spacing as specified
+  document.getElementById('intro').style.cssText += ';display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:0;height:100vh;overflow:hidden;';
+  document.getElementById('intro-main').style.cssText += ';margin-top:48px;display:flex;flex-direction:column;align-items:center;';
+
+  document.querySelector('#intro-title .t-binary-block').style.marginBottom = '24px';
+  document.querySelector('#intro-title .t-subtitle').innerHTML = 'JOB HUNTING<br>IS NOT BINARY';
+  document.querySelector('#intro-title .t-subtitle').style.marginBottom = '16px';
+
+  const msg = document.getElementById('mobile-msg');
+  msg.style.display = 'block';
+  msg.style.marginTop = '48px';
+
+  const credit = document.getElementById('intro-credit');
+  credit.style.position = 'relative';
+  credit.style.bottom = 'auto';
+  credit.style.marginTop = '48px';
+  credit.style.marginBottom = '24px';
 }
 
 const blocks = [
