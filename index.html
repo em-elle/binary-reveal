@@ -547,6 +547,12 @@
 <button id="close-btn"></button>
 
 <script>
+const isMobile = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+if (isMobile) {
+  document.getElementById('start-btn').style.display = 'none';
+  document.getElementById('mobile-msg').style.display = 'block';
+}
+
 const blocks = [
   { type: 'title', text: '00000000…(1)' },
   { type: 'title', text: 'Job hunting is not binary' },
