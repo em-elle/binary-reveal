@@ -551,6 +551,7 @@ const isMobile = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
 if (isMobile) {
   document.getElementById('start-btn').style.display = 'none';
   document.getElementById('intro').style.overflow = 'hidden';
+  document.getElementById('intro').style.padding = '0';
   document.getElementById('intro-main').style.marginTop = '32px';
   document.querySelector('#intro-title .t-subtitle').innerHTML = 'JOB HUNTING<br>IS NOT BINARY';
   const msg = document.getElementById('mobile-msg');
