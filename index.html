@@ -553,11 +553,9 @@ if (isMobile) {
   document.getElementById('intro').style.overflow = 'hidden';
   document.querySelector('#intro-title .t-subtitle').innerHTML = 'JOB HUNTING<br>IS NOT BINARY';
   const msg = document.getElementById('mobile-msg');
+  const credit = document.getElementById('intro-credit');
   msg.style.display = 'block';
-  msg.style.position = 'absolute';
-  msg.style.bottom = 'calc(4vh + 2em)';
-  msg.style.width = '100%';
-  msg.style.left = '0';
+  credit.parentNode.insertBefore(msg, credit);
 }
 
 const blocks = [
