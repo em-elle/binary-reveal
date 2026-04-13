@@ -553,7 +553,12 @@
 const isMobile = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
 if (isMobile) {
   document.getElementById('start-btn').style.display = 'none';
-  document.getElementById('mobile-msg').style.display = 'block';
+  const msg = document.getElementById('mobile-msg');
+  msg.style.display = 'block';
+  msg.style.position = 'absolute';
+  msg.style.bottom = 'calc(4vh + 11px + 24px)';
+  msg.style.left = '0';
+  msg.style.width = '100%';
   document.getElementById('intro').style.justifyContent = 'flex-start';
   document.getElementById('intro').style.padding = '0';
   document.getElementById('intro-main').style.marginTop = '0';
