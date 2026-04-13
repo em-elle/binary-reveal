@@ -561,11 +561,13 @@ if (isMobile) {
 
   document.querySelector('#intro-title .t-binary-block').style.marginBottom = '24px';
   document.querySelector('#intro-title .t-subtitle').innerHTML = 'JOB HUNTING<br>IS NOT BINARY';
-  document.querySelector('#intro-title .t-subtitle').style.marginBottom = '16px';
+  document.querySelector('#intro-title .t-subtitle').style.marginBottom = '0';
+  document.getElementById('intro-desc').style.marginTop = '16px';
 
   const msg = document.getElementById('mobile-msg');
   msg.style.display = 'block';
   msg.style.marginTop = '48px';
+  msg.style.marginBottom = '0';
 
   const credit = document.getElementById('intro-credit');
   credit.style.position = 'relative';
