@@ -340,7 +340,7 @@
 
   .subtitle-line { display: inline; }
 
-  @media (hover: none) and (pointer: coarse) {
+  @media (max-width: 768px) {
     .subtitle-line { display: block; }
 
     #mobile-notice { display: none; }
@@ -741,7 +741,7 @@ requestAnimationFrame(() => {
   });
 });
 
-const isMobile = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+const isMobile = window.matchMedia('(max-width: 768px)').matches;
 const touchRing = document.getElementById('touch-ring');
 
 document.addEventListener('mousemove', (e) => {
