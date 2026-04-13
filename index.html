@@ -345,8 +345,26 @@
 
     #mobile-notice { display: none; }
     #custom-cursor { display: none; }
-    #touch-ring {
-      display: block;
+    #touch-ring { display: block; }
+
+    #canvas-container {
+      width: calc(100vw - 32px);
+      height: calc(100vh - 32px);
+      top: 16px;
+      left: 16px;
+    }
+
+    #close-btn {
+      top: calc(16px + 48px);
+      right: calc(16px + 48px);
+    }
+
+    #reveal-progress {
+      top: 16px;
+    }
+
+    .content-layer {
+      padding: 0 20px;
     }
   }
 
@@ -810,10 +828,11 @@ document.getElementById('start-btn').addEventListener('click', () => {
   const btn = document.getElementById('start-btn');
   const rect = btn.getBoundingClientRect();
 
-  const modalW = window.innerWidth * 0.8;
-  const modalH = window.innerHeight * 0.8;
-  const modalL = (window.innerWidth - modalW) / 2;
-  const modalT = (window.innerHeight - modalH) / 2;
+  const margin = isMobile ? 16 : window.innerWidth * 0.1;
+  const modalW = window.innerWidth - margin * 2;
+  const modalH = window.innerHeight - margin * 2;
+  const modalL = margin;
+  const modalT = margin;
 
   const overlay = document.createElement('div');
   overlay.style.cssText = `
