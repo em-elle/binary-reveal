@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>0000000000…(1)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0a0a0a;
+    color: #1a1a1a;
+    overflow-x: hidden;
+    cursor: none;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Custom cursor */
+  #custom-cursor {
+    position: fixed;
+    z-index: 9999;
+    pointer-events: none;
+    font-family: 'Fira Code', monospace;
+    font-weight: 400;
+    color: #ffffff;
+    opacity: 0.25;
+    transform: translate(-50%, -50%);
+    transition: opacity 0.8s ease;
+    user-select: none;
+    line-height: 1;
+  }
+
+  #custom-cursor.is-one {
+    opacity: 0.25;
+    transition: opacity 0.8s ease;
+  }
+
+
+  #canvas-container {
+    position: fixed;
+    width: 80vw;
+    height: 80vh;
+    top: 10vh;
+    left: 10vw;
+    z-index: 10;
+    overflow: hidden;
+    background: #d8d4d0;
+    border-radius: 16px;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  #canvas-scroll {
+    width: 100%;
+    height: 100%;
+    overflow-y: scroll;
+    padding: 10vh 0 8vh;
+  }
+
+  #canvas-container.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  #close-btn {
+    position: fixed;
+    top: calc(10vh + 48px);
+    right: calc(10vw + 48px);
+    z-index: 11;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.06);
+    border: none;
+    outline: none;
+    color: rgba(0,0,0,0.45);
+    cursor: none;
+    padding: 0;
+    flex-shrink: 0;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+
+  #close-btn::before,
+  #close-btn::after {
+    content: '';
+    position: absolute;
+    width: 12px;
+    height: 1px;
+    background: currentColor;
+    border-radius: 1px;
+  }
+
+  #close-btn::before { transform: rotate(45deg); }
+  #close-btn::after  { transform: rotate(-45deg); }
+
+  #close-btn:hover {
+    background: rgba(0,0,0,0.12);
+    color: rgba(0,0,0,0.75);
+  }
+
+  #btn-icon {
+    color: inherit;
+    font-size: 16px;
+    margin-left: 0.5em;
+    transform: rotate(45deg);
+    display: inline-block;
+  }
+
+  .content-layer {
+    position: relative;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 56px;
+  }
+
+  .block {
+    position: relative;
+    margin-bottom: 1.8em;
+  }
+
+  .block:has(.title-text) + .block:has(.title-text) {
+    margin-top: -1.2em;
+  }
+
+  .block .text {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 1.72;
+    letter-spacing: 0.01em;
+    color: #1a1a1a;
+    position: relative;
+    z-index: 2;
+  }
+
+  .block .text.title-text {
+    font-size: 36px;
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    margin-bottom: 0.2em;
+  }
+
+  .block .text.subtitle-text {
+    font-size: 24px;
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.5;
+  }
+
+  .block .text.subtitle-text .text-char.visible {
+    opacity: 0.55;
+  }
+
+  .block .text.separator-text {
+    text-align: left;
+    font-family: 'Fira Code', monospace;
+    font-size: 14px;
+    letter-spacing: 0.5em;
+  }
+
+  .block .text.separator-text .text-char.visible {
+    opacity: 0.3;
+  }
+
+  .block:has(.list-item) {
+    margin-bottom: 0.4em;
+  }
+
+  .block .text.list-item {
+    padding-left: 1.5em;
+    position: relative;
+  }
+
+  .block .text.list-item::before {
+    content: '·';
+    position: absolute;
+    left: 0.5em;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  .block.has-visible .text.list-item::before {
+    opacity: 0.5;
+  }
+
+  .block .text.emphasis-text {
+    font-style: italic;
+  }
+
+  .block .text.binary-sequence {
+    font-family: 'Fira Code', monospace;
+    font-size: 16px;
+    letter-spacing: 0.08em;
+    text-align: left;
+  }
+
+  .block .text.binary-sequence .text-char.visible {
+    color: #666;
+  }
+
+  .block .text.code-text {
+    font-family: 'Fira Code', monospace;
+    font-size: 15px;
+    font-weight: 300;
+    color: #1a1a1a;
+    line-height: 1.6;
+    letter-spacing: 0.02em;
+    white-space: pre;
+  }
+
+  .block:has(.code-text) {
+    margin-bottom: 0.3em;
+  }
+
+  .block .text.code-text .text-char.visible {
+    opacity: 0.7;
+  }
+
+  .block .text.binary-block-text {
+    font-family: 'Fira Code', monospace;
+    font-size: 16px;
+    letter-spacing: 0.05em;
+    line-height: 1.6;
+    word-break: break-all;
+    max-width: 20ch;
+  }
+
+  .block .text.binary-block-text .text-char.visible {
+    color: #666;
+  }
+
+  /* Zero overlay */
+  .block .zero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 3;
+    pointer-events: none;
+    overflow: hidden;
+    transition: opacity 0.6s ease;
+  }
+
+  .block .zero-overlay.faded {
+    opacity: 0;
+  }
+
+  .zero-char {
+    font-family: 'Fira Code', monospace;
+    font-weight: 400;
+    color: #8a8680;
+    position: absolute;
+    text-align: center;
+    transition: opacity 0.4s ease;
+    user-select: none;
+  }
+
+  .zero-char.revealed {
+    opacity: 0;
+  }
+
+  /* Per-character reveal */
+  .text-char {
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    display: inline;
+  }
+
+  .text-char.visible {
+    opacity: 1;
+  }
+
+  /* Word wrapper for magnetic repulsion phase */
+  .word-wrap {
+    display: inline-block;
+    transition: transform 0.12s ease-out;
+    will-change: transform;
+  }
+
+  /* Progress */
+  #progress-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    background: #1a1a1a;
+    opacity: 0.2;
+    transition: width 0.3s ease;
+    z-index: 100;
+  }
+
+  /* Reveal progress label */
+  #reveal-progress {
+    position: fixed;
+    top: 10vh;
+    transform: translateY(calc(-100% - 16px));
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-family: 'Fira Code', monospace;
+    font-size: 11px;
+    font-weight: 300;
+    color: #888;
+    letter-spacing: 0.06em;
+    padding: 16px 0;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+    z-index: 20;
+  }
+
+  #reveal-progress.visible {
+    opacity: 1;
+  }
+
+  /* Mobile */
+  #mobile-notice {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: #0a0a0a;
+    color: #888;
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 32px;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 18px;
+    line-height: 1.6;
+    color: #888;
+  }
+
+  @media (hover: none) and (pointer: coarse) {
+    #mobile-notice { display: none; }
+    #custom-cursor { display: none; }
+    #touch-ring {
+      display: block;
+    }
+  }
+
+  #touch-ring {
+    display: none;
+    position: fixed;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255,255,255,0.25);
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+    transition: opacity 0.3s ease;
+    opacity: 0;
+  }
+
+  #touch-ring.active {
+    opacity: 1;
+  }
+
+  @keyframes zeroPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 1; }
+  }
+
+  /* Intro screen */
+  #intro {
+    height: 100vh;
+    background: #0a0a0a;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 12vh 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #intro-main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 120px;
+  }
+
+  #intro-top {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+  }
+
+#intro-title {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    pointer-events: none;
+    padding: 0 24px;
+  }
+
+  #intro-title .t-pixel {
+    font-family: 'Fira Code', monospace;
+    font-size: clamp(10px, 1.2vw, 14px);
+    font-weight: 300;
+    color: #ffffff;
+    letter-spacing: 0.1em;
+    line-height: 1.8;
+    margin-bottom: 1em;
+  }
+
+  #intro-title .t-pixel-main {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: clamp(11px, 1.2vw, 18px);
+    font-weight: 300;
+    color: #ffffff;
+    line-height: 1.7;
+    letter-spacing: 0.18em;
+  }
+
+  #intro-title .t-binary-block {
+    line-height: 1.6;
+    margin-bottom: 2em;
+  }
+
+  #intro-title .t-subtitle {
+    font-size: clamp(22px, 3.5vw, 48px);
+    letter-spacing: 0.18em;
+  }
+
+  #start-btn {
+    margin-top: 64px;
+    border-radius: 40px;
+    display: inline-flex;
+    align-items: center;
+    font-family: 'Fira Code', monospace;
+    font-size: clamp(10px, 0.95vw, 13px);
+    font-weight: 300;
+    color: #ffffff;
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.6);
+    outline: none;
+    padding: 0.65em 1.4em;
+    cursor: none;
+    letter-spacing: 0.15em;
+    transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+  }
+
+  #start-btn:hover {
+    background: #d8d4d0;
+    border-color: #d8d4d0;
+    color: #1a1a1a;
+  }
+
+
+  #intro-desc {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: clamp(14px, 2vw, 32px);
+    white-space: nowrap;
+    font-weight: 300;
+    font-style: italic;
+    color: #888;
+    letter-spacing: 0.01em;
+    line-height: 1.5;
+    text-align: center;
+    margin-top: 16px;
+    padding: 0 24px;
+  }
+
+  #intro-credit {
+    position: absolute;
+    bottom: 4vh;
+    font-family: 'Fira Code', monospace;
+    font-size: 11px;
+    font-weight: 300;
+    color: #888;
+    letter-spacing: 0.08em;
+  }
+
+  #credit-link {
+    color: inherit;
+    text-decoration: none;
+    cursor: none;
+    transition: color 0.2s ease;
+  }
+
+  #credit-link:hover {
+    color: #ffffff;
+  }
+
+  #intro-credit .word-wrap {
+    display: inline-block;
+    transition: transform 0.12s ease-out;
+    will-change: transform;
+  }
+
+  #intro-title, #intro-desc, #intro-hint {
+    pointer-events: none;
+  }
+
+  #intro-hint {
+    font-family: 'Fira Code', monospace;
+    font-size: clamp(9px, 0.8vw, 11px);
+    font-weight: 300;
+    color: #888;
+    letter-spacing: 0.06em;
+    margin-top: 8px;
+    text-align: center;
+  }
+
+</style>
+</head>
+<body>
+
+<div id="mobile-notice">
+  This piece is designed for a cursor.<br>
+  Please visit on a device with a mouse or trackpad.
+</div>
+
+<div id="intro">
+  <div id="intro-main">
+    <div id="intro-top">
+      <div id="intro-title">
+        <div class="t-pixel-main t-binary-block">00000000000000000000<br>00000000000000000000<br>00000000000000000000<br>00000000000000000000<br>00000000000000000000<br>00000000000000000000<br>00000000000000000000<br>00000000000000000001</div>
+        <div class="t-pixel-main t-subtitle">JOB HUNTING IS NOT BINARY</div>
+      </div>
+      <p id="intro-desc">An interactive essay for those interviewing</p>
+    </div>
+    <button id="start-btn">Read essay</button>
+  </div>
+
+  <div id="intro-credit">by <a href="https://askformailinh.com" target="_blank" rel="noopener" id="credit-link">Mai-Linh Barry</a> using Claude Code</div>
+</div>
+
+<div id="custom-cursor">0</div>
+<div id="touch-ring"></div>
+<div id="progress-bar"></div>
+
+<div id="reveal-progress"></div>
+
+<div id="canvas-container">
+  <div id="canvas-scroll">
+    <div class="content-layer" id="content-layer"></div>
+  </div>
+</div>
+<button id="close-btn"></button>
+
+<script>
+const blocks = [
+  { type: 'title', text: '00000000…(1)' },
+  { type: 'title', text: 'Job hunting is not binary' },
+  { type: 'code', text: '' },
+  { type: 'paragraph', text: 'At some point, job hunting starts to feel like a system that only records two things:' },
+  { type: 'code', text: 'outcome := {' },
+  { type: 'code', text: '  0: reject,' },
+  { type: 'code', text: '  1: hire' },
+  { type: 'code', text: '}' },
+  { type: 'code', text: '' },
+  { type: 'paragraph', text: 'From the outside, a jobseeker\'s sequence looks like this:' },
+  { type: 'binary-block', text: '0'.repeat(79) + '1' },
+  { type: 'paragraph', text: 'And the frustrating part is–that\'s technically correct. You only need one "success" to get a job. Everything before that is logged as a "failure".' },
+  { type: 'paragraph', text: 'But that model hides almost everything that actually matters.' },
+  { type: 'paragraph', text: 'It treats your first interview and your fiftieth as identical. It ignores the fact that earlier "no"s change the probability of the next one. It reduces weeks–sometimes months of effort into a single digit.' },
+  { type: 'emphasis', text: 'It\'s a lossy representation.' },
+ 
+  { type: 'paragraph', text: 'Because every interview is doing more than producing an outcome. It\'s generating signal:' },
+  { type: 'list', text: 'how clearly you communicate' },
+  { type: 'list', text: 'how relevant your examples are' },
+  { type: 'list', text: 'how confident you come across' },
+  { type: 'list', text: 'how well you align with the role' },
+   { type: 'code', text: '' },
+  { type: 'paragraph', text: 'Companies compress all of that into 0 (reject) or 1 (hire).' },
+  { type: 'paragraph', text: 'And somewhere along the way, you might find yourself doing the same.' },
+  { type: 'paragraph', text: 'Each interview displayed as "0" isn\'t empty, it\'s carrying valuable data that is not immediately visible.' },
+  { type: 'paragraph', text: ' You\'re not repeating the same "0". You\'re refining it.' },
+
+  { type: 'paragraph', text: 'Interviewing isn\'t just evaluation–it\'s performance.' },
+   { type: 'emphasis', text: 'And the system logging outcomes has no record of what it cost.' },
+  { type: 'paragraph', text: 'You\'re expected to understand a company you don\'t work for, analyse a product you don\'t own, and present yourself at your best–repeatedly. Often across multiple processes at once.' },
+  { type: 'paragraph', text: 'People say job hunting is a full-time job, but it can feel like more than that. Because in a job, you don\'t have to prove your worth from scratch every single day. In interviews, it often feels like you do.' },
+  { type: 'paragraph', text: 'And none of that is logged in the output. So whilst the system might log your journey as:' },
+  { type: 'binary-block', text: '0'.repeat(79) + '1' },
+  { type: 'paragraph', text: 'it doesn\'t really capture what\'s happening under the surface. The progress is there–the system just isn\'t built to show it.' },
+ 
+];
+
+const contentLayer = document.getElementById('content-layer');
+const progressBar = document.getElementById('progress-bar');
+const revealProgress = document.getElementById('reveal-progress');
+const cursorEl = document.getElementById('custom-cursor');
+const REVEAL_RADIUS = 110;
+const REPEL_RADIUS = 220;
+const REPEL_FORCE = 60;
+
+// Cursor size matches reveal radius (diameter)
+const cursorSize = REVEAL_RADIUS * 2;
+cursorEl.style.fontSize = cursorSize + 'px';
+
+const charData = [];
+const wordWraps = []; // for repulsion phase
+let totalChars = 0;
+let mouseX = -9999, mouseY = -9999;
+let smoothX = -9999, smoothY = -9999;
+let isOneMode = false;
+const blockMeta = [];
+let oneCvs = null, oneCtx = null, oneParticlesRel = null;
+let cursorOpacity = 0.25;
+
+// Build DOM — wrap chars in word-level spans
+blocks.forEach((block, blockIdx) => {
+  const container = document.createElement('div');
+  container.className = 'block';
+  container.dataset.index = blockIdx;
+
+  const textEl = document.createElement('div');
+  let cls = 'text';
+  if (block.type === 'title') cls += ' title-text';
+  if (block.type === 'subtitle') cls += ' subtitle-text';
+  if (block.type === 'separator') cls += ' separator-text';
+  if (block.type === 'list') cls += ' list-item';
+  if (block.type === 'emphasis') cls += ' emphasis-text';
+  if (block.type === 'binary') cls += ' binary-sequence';
+  if (block.type === 'binary-block') cls += ' binary-block-text';
+  if (block.type === 'code') cls += ' code-text';
+  textEl.className = cls;
+
+  // Split text into words (preserving spaces)
+  const words = block.text.split(/(\s+)/);
+  const perChar = (block.type === 'binary' || block.type === 'binary-block' || block.type === 'title');
+
+  words.forEach(word => {
+    // Whitespace goes in as a plain text node, not a word-wrap
+    if (/^\s+$/.test(word)) {
+      textEl.appendChild(document.createTextNode(word));
+      return;
+    }
+
+    if (perChar) {
+      // Each character gets its own word-wrap for individual repulsion
+      for (const ch of word) {
+        const wordSpan = document.createElement('span');
+        wordSpan.className = 'word-wrap';
+        wordWraps.push(wordSpan);
+
+        const span = document.createElement('span');
+        span.className = 'text-char';
+        span.textContent = ch;
+        wordSpan.appendChild(span);
+        charData.push({ el: span, zeroEl: null, finalChar: ch, revealed: false, blockIdx });
+
+        totalChars++;
+        textEl.appendChild(wordSpan);
+      }
+    } else {
+      const wordSpan = document.createElement('span');
+      wordSpan.className = 'word-wrap';
+      wordWraps.push(wordSpan);
+
+      for (const ch of word) {
+        const span = document.createElement('span');
+        span.className = 'text-char';
+        span.textContent = ch;
+        wordSpan.appendChild(span);
+        charData.push({ el: span, zeroEl: null, finalChar: ch, revealed: false, blockIdx });
+      }
+
+      totalChars += word.length;
+      textEl.appendChild(wordSpan);
+    }
+  });
+
+  container.appendChild(textEl);
+
+  const zeroOverlay = document.createElement('div');
+  zeroOverlay.className = 'zero-overlay';
+  container.appendChild(zeroOverlay);
+
+  blockMeta.push({ container, zeroOverlay, blockIdx });
+  contentLayer.appendChild(container);
+});
+
+// Generate zero characters — one per text character, exactly overlaid
+requestAnimationFrame(() => {
+  blockMeta.forEach(({ container, zeroOverlay, blockIdx }) => {
+    const containerRect = container.getBoundingClientRect();
+    const blockChars = charData.filter(c => c.blockIdx === blockIdx);
+
+    zeroOverlay.innerHTML = '';
+    blockChars.forEach(item => {
+      const rect = item.el.getBoundingClientRect();
+      const cx = (rect.left + rect.width / 2) - containerRect.left;
+      const top = rect.top - containerRect.top;
+      const computed = window.getComputedStyle(item.el);
+      const fs = parseFloat(computed.fontSize);
+      const ff = computed.fontFamily;
+      const lh = rect.height;
+      const dur = (3 + Math.random() * 3).toFixed(1);
+      const delay = (Math.random() * 4).toFixed(2);
+
+      const span = document.createElement('span');
+      span.className = 'zero-char';
+      span.textContent = '0';
+      span.style.left = cx + 'px';
+      span.style.top = top + 'px';
+      span.style.transform = 'translateX(-50%)';
+      span.style.fontSize = fs + 'px';
+      span.style.fontFamily = ff;
+      span.style.lineHeight = lh + 'px';
+      span.style.animation = `zeroPulse ${dur}s ease-in-out ${delay}s infinite`;
+      zeroOverlay.appendChild(span);
+      item.zeroEl = span;
+    });
+  });
+});
+
+const isMobile = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+const touchRing = document.getElementById('touch-ring');
+
+document.addEventListener('mousemove', (e) => {
+  mouseX = e.clientX;
+  mouseY = e.clientY;
+});
+
+if (isMobile) {
+  let touchTimeout;
+  document.addEventListener('touchmove', (e) => {
+    const t = e.touches[0];
+    mouseX = t.clientX;
+    mouseY = t.clientY;
+    touchRing.style.left = t.clientX + 'px';
+    touchRing.style.top = t.clientY + 'px';
+    touchRing.classList.add('active');
+    clearTimeout(touchTimeout);
+    touchTimeout = setTimeout(() => touchRing.classList.remove('active'), 300);
+  }, { passive: true });
+
+  document.addEventListener('touchstart', (e) => {
+    const t = e.touches[0];
+    mouseX = t.clientX;
+    mouseY = t.clientY;
+    touchRing.style.left = t.clientX + 'px';
+    touchRing.style.top = t.clientY + 'px';
+    touchRing.classList.add('active');
+  }, { passive: true });
+
+  document.addEventListener('touchend', () => {
+    touchRing.classList.remove('active');
+    mouseX = -9999;
+    mouseY = -9999;
+  }, { passive: true });
+}
+
+function scrambleReveal(item) {
+  const zeroEl = item.zeroEl;
+  const realEl = item.el;
+  const finalChar = item.finalChar;
+  const steps = 6;
+  const ms = 38;
+  let count = 0;
+
+  if (zeroEl) zeroEl.style.animation = 'none';
+
+  const tick = () => {
+    if (count < steps) {
+      if (zeroEl) zeroEl.textContent = Math.random() < 0.55 ? '0' : '1';
+      count++;
+      setTimeout(tick, ms);
+    } else {
+      if (zeroEl) zeroEl.textContent = finalChar;
+      setTimeout(() => {
+        if (zeroEl) zeroEl.style.opacity = '0';
+        realEl.classList.add('visible');
+      }, ms * 2);
+    }
+  };
+
+  tick();
+}
+
+// Brighten cursor over interactive elements
+function setCursorOpacity(val) {
+  cursorOpacity = val;
+  cursorEl.style.opacity = String(val);
+}
+
+const closeBtn = document.getElementById('close-btn');
+closeBtn.addEventListener('mouseenter', () => setCursorOpacity(0.6));
+closeBtn.addEventListener('mouseleave', () => setCursorOpacity(0.25));
+
+const startBtn = document.getElementById('start-btn');
+startBtn.addEventListener('mouseenter', () => setCursorOpacity(0.6));
+startBtn.addEventListener('mouseleave', () => setCursorOpacity(0.25));
+
+const creditLink = document.getElementById('credit-link');
+creditLink.addEventListener('mouseenter', () => setCursorOpacity(0.6));
+creditLink.addEventListener('mouseleave', () => setCursorOpacity(0.25));
+
+// Intro: expand button to modal, then reveal article
+document.getElementById('start-btn').addEventListener('click', () => {
+  const btn = document.getElementById('start-btn');
+  const rect = btn.getBoundingClientRect();
+
+  const modalW = window.innerWidth * 0.8;
+  const modalH = window.innerHeight * 0.8;
+  const modalL = (window.innerWidth - modalW) / 2;
+  const modalT = (window.innerHeight - modalH) / 2;
+
+  const overlay = document.createElement('div');
+  overlay.style.cssText = `
+    position: fixed;
+    left: ${rect.left}px;
+    top: ${rect.top}px;
+    width: ${rect.width}px;
+    height: ${rect.height}px;
+    background: #d8d4d0;
+    border-radius: 16px;
+    z-index: 9;
+    pointer-events: none;
+    transition: left 0.85s cubic-bezier(0.65, 0, 0.35, 1),
+                top 0.85s cubic-bezier(0.65, 0, 0.35, 1),
+                width 0.85s cubic-bezier(0.65, 0, 0.35, 1),
+                height 0.85s cubic-bezier(0.65, 0, 0.35, 1);
+  `;
+  document.body.appendChild(overlay);
+
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    overlay.style.left   = modalL + 'px';
+    overlay.style.top    = modalT + 'px';
+    overlay.style.width  = modalW + 'px';
+    overlay.style.height = modalH + 'px';
+  }));
+
+  overlay.addEventListener('transitionend', () => {
+    const canvas = document.getElementById('canvas-container');
+    canvas.style.transition = 'none';
+    canvas.classList.add('open');
+    closeBtn.style.display = 'flex';
+    if (!isOneMode) {
+      revealProgress.textContent = 'Move cursor to reveal text–0% of the essay revealed';
+      revealProgress.classList.add('visible');
+    }
+    // Remove overlay only after canvas is painted
+    requestAnimationFrame(() => {
+      overlay.remove();
+      requestAnimationFrame(() => {
+        canvas.style.transition = '';
+      });
+    });
+  }, { once: true });
+});
+
+// Close modal
+closeBtn.addEventListener('click', () => {
+  const canvas = document.getElementById('canvas-container');
+  canvas.classList.remove('open');
+  closeBtn.style.display = 'none';
+});
+
+// Sample pixel positions from a glyph rendered at actual cursor size (scale=1)
+function sampleGlyph(char, fontSize, count) {
+  const size = Math.ceil(fontSize * 1.6);
+  const c = document.createElement('canvas');
+  c.width = size; c.height = size;
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = '#fff';
+  ctx.font = `300 ${fontSize}px "Fira Code", monospace`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(char, size / 2, size / 2);
+  const data = ctx.getImageData(0, 0, size, size).data;
+  const pts = [];
+  for (let y = 0; y < size; y++) {
+    for (let x = 0; x < size; x++) {
+      if (data[(y * size + x) * 4 + 3] > 60) pts.push({ x, y });
+    }
+  }
+  const step = Math.max(1, Math.floor(pts.length / count));
+  const result = [];
+  for (let i = 0; i < pts.length; i += step) result.push(pts[i]);
+  return { pts: result, size };
+}
+
+function switchToOne() {
+  if (isOneMode) return;
+  isOneMode = true;
+
+  // Remove DOM cursor entirely — canvas takes over permanently
+  cursorEl.style.display = 'none';
+
+  const fontSize = parseFloat(cursorEl.style.fontSize) || REVEAL_RADIUS * 2;
+  const PARTICLE_COUNT = 600;
+
+  const zeroData = sampleGlyph('0', fontSize, PARTICLE_COUNT);
+  const oneData  = sampleGlyph('1', fontSize, PARTICLE_COUNT);
+
+  // Normalize both sets to same count
+  while (zeroData.pts.length < oneData.pts.length) zeroData.pts.push(zeroData.pts[Math.floor(Math.random() * zeroData.pts.length)]);
+  while (oneData.pts.length < zeroData.pts.length) oneData.pts.push(oneData.pts[Math.floor(Math.random() * oneData.pts.length)]);
+  const n = Math.min(zeroData.pts.length, oneData.pts.length);
+
+  const cvs = document.createElement('canvas');
+  cvs.style.cssText = 'position:fixed;top:0;left:0;pointer-events:none;z-index:10000;';
+  cvs.width  = window.innerWidth;
+  cvs.height = window.innerHeight;
+  document.body.appendChild(cvs);
+  const ctx = cvs.getContext('2d');
+
+  // scale = 1: particles rendered at actual glyph size, centered on cursor
+  const half = zeroData.size / 2;
+  const offsetX = smoothX - half;
+  const offsetY = smoothY - half;
+
+  const particles = [];
+  for (let i = 0; i < n; i++) {
+    const s = zeroData.pts[i];
+    const e = oneData.pts[i];
+    particles.push({
+      sx: s.x + offsetX, sy: s.y + offsetY,
+      ex: e.x + offsetX, ey: e.y + offsetY,
+      x:  s.x + offsetX, y:  s.y + offsetY,
+      delay: Math.random() * 0.35,
+    });
+  }
+
+  const duration = 1600;
+  const start = performance.now();
+
+  function ease(t) { return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2; }
+
+  function drawParticles(ts) {
+    const raw = Math.min(1, (ts - start) / duration);
+    const ox = smoothX - half;
+    const oy = smoothY - half;
+
+    ctx.clearRect(0, 0, cvs.width, cvs.height);
+    ctx.fillStyle = 'rgba(255,255,255,0.25)';
+
+    for (let i = 0; i < particles.length; i++) {
+      const p = particles[i];
+      const t = ease(Math.max(0, Math.min(1, (raw - p.delay) / (1 - p.delay))));
+      // Anchor source to cursor
+      const sx = p.sx - (offsetX - ox);
+      const sy = p.sy - (offsetY - oy);
+      const ex = p.ex - (offsetX - ox);
+      const ey = p.ey - (offsetY - oy);
+      // Add scatter arc
+      const scatter = Math.sin(t * Math.PI) * 18 * (Math.random() < 0.5 ? 1 : -1);
+      p.x = sx + (ex - sx) * t + scatter * (1 - t);
+      p.y = sy + (ey - sy) * t + scatter * (1 - t);
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 1.2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    if (raw < 1) {
+      requestAnimationFrame(drawParticles);
+    } else {
+      // Morph done — switch to direct text rendering for HQ result
+      oneCvs = cvs;
+      oneCtx = ctx;
+      oneParticlesRel = null; // signal: use text draw, not particles
+    }
+  }
+
+  requestAnimationFrame(drawParticles);
+}
+
+function animate() {
+  smoothX += (mouseX - smoothX) * 0.25;
+  smoothY += (mouseY - smoothY) * 0.25;
+
+  // Position custom cursor
+  cursorEl.style.left = smoothX + 'px';
+  cursorEl.style.top = smoothY + 'px';
+
+  if (!isOneMode) {
+    // === REVEAL PHASE ===
+    let revealedCount = 0;
+
+    for (let i = 0; i < charData.length; i++) {
+      const item = charData[i];
+      if (item.revealed) { revealedCount++; continue; }
+
+      const rect = item.el.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+
+      // Auto-reveal chars that have been scrolled past (above viewport)
+      if (rect.bottom < -50) {
+        item.revealed = true;
+        item.el.classList.add('visible');
+        if (item.zeroEl) item.zeroEl.style.opacity = '0';
+        revealedCount++;
+        const blockEl = item.el.closest('.block');
+        if (blockEl) blockEl.classList.add('has-visible');
+        continue;
+      }
+
+      const dx = smoothX - cx;
+      const dy = smoothY - cy;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+
+      if (dist < REVEAL_RADIUS) {
+        item.revealed = true;
+        revealedCount++;
+        const blockEl = item.el.closest('.block');
+        if (blockEl) blockEl.classList.add('has-visible');
+        scrambleReveal(item);
+      }
+    }
+
+    // Fade full overlay once block is done
+    blockMeta.forEach(({ zeroOverlay, blockIdx }) => {
+      const blockChars = charData.filter(c => c.blockIdx === blockIdx);
+      if (blockChars.every(c => c.revealed)) zeroOverlay.classList.add('faded');
+    });
+
+    const progress = totalChars > 0 ? (revealedCount / totalChars) * 100 : 0;
+    progressBar.style.width = progress + '%';
+    revealProgress.textContent = 'Move cursor to reveal text–' + Math.round(progress) + '% of the essay revealed';
+
+    // Switch to "1" mode when nearly fully revealed
+    if (revealedCount >= totalChars * 0.95) {
+      // Reveal any remaining stragglers
+      charData.forEach(item => {
+        if (!item.revealed) {
+          item.revealed = true;
+          item.el.classList.add('visible');
+          if (item.zeroEl) item.zeroEl.style.opacity = '0';
+        }
+      });
+      blockMeta.forEach(({ zeroOverlay }) => zeroOverlay.classList.add('faded'));
+      switchToOne();
+      progressBar.style.opacity = '0';
+      revealProgress.classList.remove('visible');
+    }
+
+  } else {
+    // Redraw canvas cursor at current smooth position using crisp text
+    if (oneCvs && oneCtx) {
+      const fontSize = parseFloat(cursorEl.style.fontSize) || REVEAL_RADIUS * 2;
+      oneCtx.clearRect(0, 0, oneCvs.width, oneCvs.height);
+      oneCtx.save();
+      oneCtx.globalAlpha = cursorOpacity;
+      oneCtx.fillStyle = '#ffffff';
+      oneCtx.font = `300 ${fontSize}px "Fira Code", monospace`;
+      oneCtx.textAlign = 'center';
+      oneCtx.textBaseline = 'middle';
+      oneCtx.fillText('1', smoothX, smoothY);
+      oneCtx.restore();
+    }
+
+    // === MAGNET PHASE — repel all words from cursor (desktop only) ===
+    if (isMobile) return;
+    for (let i = 0; i < wordWraps.length; i++) {
+      const wrap = wordWraps[i];
+      const rect = wrap.getBoundingClientRect();
+      const wcx = rect.left + rect.width / 2;
+      const wcy = rect.top + rect.height / 2;
+      const dx = wcx - smoothX;
+      const dy = wcy - smoothY;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+
+      if (dist < REPEL_RADIUS && dist > 0) {
+        const strength = Math.pow((REPEL_RADIUS - dist) / REPEL_RADIUS, 1.5) * REPEL_FORCE;
+        const nx = (dx / dist) * strength;
+        const ny = (dy / dist) * strength;
+        wrap.style.transform = `translate(${nx}px, ${ny}px)`;
+      } else {
+        wrap.style.transform = 'translate(0, 0)';
+      }
+    }
+  }
+
+  // Always repel intro credit words
+  for (let i = 0; i < introRepelWraps.length; i++) {
+    const wrap = introRepelWraps[i];
+    const rect = wrap.getBoundingClientRect();
+    const wcx = rect.left + rect.width / 2;
+    const wcy = rect.top + rect.height / 2;
+    const dx = wcx - smoothX;
+    const dy = wcy - smoothY;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+
+    if (dist < REPEL_RADIUS && dist > 0) {
+      const strength = Math.pow((REPEL_RADIUS - dist) / REPEL_RADIUS, 1.5) * REPEL_FORCE;
+      wrap.style.transform = `translate(${(dx / dist) * strength}px, ${(dy / dist) * strength}px)`;
+    } else {
+      wrap.style.transform = 'translate(0, 0)';
+    }
+  }
+
+  requestAnimationFrame(animate);
+}
+
+// Split intro text into per-character word-wrap spans
+function splitIntoCharSpans(el) {
+  const nodes = Array.from(el.childNodes);
+  el.innerHTML = '';
+  const wraps = [];
+  nodes.forEach(node => {
+    if (node.nodeType === Node.TEXT_NODE) {
+      for (const ch of node.textContent) {
+        if (ch === ' ') {
+          el.appendChild(document.createTextNode('\u00a0'));
+        } else {
+          const wrap = document.createElement('span');
+          wrap.className = 'word-wrap';
+          wrap.textContent = ch;
+          el.appendChild(wrap);
+          wraps.push(wrap);
+        }
+      }
+    } else if (node.nodeName === 'BR') {
+      el.appendChild(document.createElement('br'));
+    } else {
+      // Recurse into child elements (e.g. existing word-wrap spans in credit)
+      wraps.push(...splitIntoCharSpans(node));
+      el.appendChild(node);
+    }
+  });
+  return wraps;
+}
+
+const introRepelWraps = [
+  ...splitIntoCharSpans(document.querySelector('#intro-title .t-binary-block')),
+  ...splitIntoCharSpans(document.querySelector('#intro-title .t-subtitle')),
+  ...splitIntoCharSpans(document.getElementById('intro-desc')),
+];
+
+requestAnimationFrame(animate);
+</script>
+</body>
+</html>
