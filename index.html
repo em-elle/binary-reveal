@@ -553,14 +553,9 @@ if (isMobile) {
   document.getElementById('mobile-msg').style.display = 'block';
   document.getElementById('intro-main').style.marginTop = '0';
   document.getElementById('intro').style.justifyContent = 'flex-start';
-  document.getElementById('intro').style.padding = '0';
-  document.querySelector('#intro-title .t-subtitle').innerHTML = 'JOB HUNTING<br>IS NOT BINARY';
-  const mobileMsg = document.getElementById('mobile-msg');
-  mobileMsg.style.position = 'absolute';
-  mobileMsg.style.bottom = 'calc(4vh + 32px)';
-  mobileMsg.style.left = '0';
-  mobileMsg.style.width = '100%';
+  document.getElementById('intro').style.padding = '8vh 0 0';
   document.getElementById('intro').style.overflow = 'hidden';
+  document.querySelector('#intro-title .t-subtitle').innerHTML = 'JOB HUNTING<br>IS NOT BINARY';
 }
 
 const blocks = [
