@@ -551,11 +551,15 @@ const isMobile = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
 if (isMobile) {
   document.getElementById('start-btn').style.display = 'none';
   document.getElementById('mobile-msg').style.display = 'block';
-  document.getElementById('intro-main').style.marginTop = '48px';
+  document.getElementById('intro-main').style.marginTop = '72px';
   document.getElementById('intro').style.justifyContent = 'flex-start';
   document.getElementById('intro').style.paddingTop = '0';
   document.querySelector('#intro-title .t-binary-block').style.marginBottom = '2em';
   document.querySelector('#intro-title .t-subtitle').innerHTML = 'JOB HUNTING<br>IS NOT BINARY';
+  const credit = document.getElementById('intro-credit');
+  credit.style.position = 'relative';
+  credit.style.bottom = 'auto';
+  credit.style.marginTop = '24px';
 }
 
 const blocks = [
